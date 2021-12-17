@@ -59,6 +59,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-app
+    volumes:
+      - .:/code
     depends_on:
       - zookeeper
       - kafka1

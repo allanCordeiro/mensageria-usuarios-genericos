@@ -1,5 +1,5 @@
 FROM python:alpine3.15
-
+WORKDIR /code
 COPY generate-random-data/. ./
 
 RUN apk update
@@ -9,4 +9,4 @@ RUN pip3 install --upgrade pip
 RUN pip install -r requirements.txt
 
 
-CMD ["python3", "generate_user_data.py"]
+ENTRYPOINT ["python3", "producer.py", "-c", "10"]
