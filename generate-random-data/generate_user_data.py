@@ -1,3 +1,5 @@
+import json
+from confluent_kafka import Producer, KafkaError, KafkaException
 from names import GetNameFromAPI
 from cpf import RandomCPF
 
@@ -18,6 +20,24 @@ def generate_user_data(quantity=None):
     return random_data
 
 
+def ack(err, msg):
+    delivered_records = 0
+    if err is not None:
+        print(f"Failed do deliver message {err}")
+    else:
+        delivered_records += 1
+        print(f"Produced record to topic {msg.topic()} partition [{msg.partition()}] @ offset {msg.offset()}")
+
+
+def publisher(user_key,user_data, kafka_producer:Producer):
+    p = kafka_producer
+    p.produce('new-customers', key=user_key, value=user_data, on_delivery=ack)
+    p.flush(10)
+
+
 if __name__ == "__main__":
-    user_data = generate_user_data(2)
-    print(user_data)
+    producer = Producer({'bootstrap.servers': 'kafka1:19091'})
+    user_data = generate_user_data()
+    for i in range(len(user_data)):
+        publisher("customer_data", json.dumps(user_data[i]), producer)
+
