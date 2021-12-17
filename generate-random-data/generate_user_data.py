@@ -1,3 +1,4 @@
+# encoding: utf-8
 import json
 from confluent_kafka import Producer, KafkaError, KafkaException
 from names import GetNameFromAPI
@@ -31,7 +32,10 @@ def ack(err, msg):
 
 def publisher(user_key,user_data, kafka_producer:Producer):
     p = kafka_producer
-    p.produce('new-customers', key=user_key, value=user_data, on_delivery=ack)
+    p.produce('new-customers',
+              key=user_key,
+              value= json.dumps(user_data, separators=(',', ':')).encode('utf-8'),
+              on_delivery=ack)
     p.flush(10)
 
 
@@ -39,5 +43,5 @@ if __name__ == "__main__":
     producer = Producer({'bootstrap.servers': 'kafka1:19091'})
     user_data = generate_user_data()
     for i in range(len(user_data)):
-        publisher("customer_data", json.dumps(user_data[i]), producer)
+        publisher("customer_data", user_data[i], producer)
 
