@@ -9,7 +9,6 @@ class RandomCPF:
         cpf_list = []
         for i in range(0, self.__quantity):
             random_number = self._get_random_seq()
-            # random_number = [3, 2, 8, 8, 3, 1, 6, 8, 8]
             first_digit = self._get_verification_digit(random_number, "J")
             final_digit = self._get_verification_digit(first_digit, "K")
             cpf_list.append(self._prettify(final_digit))
